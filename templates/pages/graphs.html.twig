@@ -1,0 +1,122 @@
+<div class="card">
+    <div class="card-header">
+        <h2 class="card-title mb-0">{{ page_title }}</h2>
+    </div>
+    <div class="card-body">
+        {% for error in errors %}
+            <div class="alert alert-danger" role="alert">
+                {{ error }}
+            </div>
+        {% endfor %}
+
+        <div class="btn-group mb-4" role="group" aria-label="Navigation dsistats">
+            <a href="/glpi/plugins/dsistats/front/dashboard.php?from_month={{ filters.from_month }}&from_year={{ filters.from_year }}&to_month={{ filters.to_month }}&to_year={{ filters.to_year }}" class="btn {% if current_view == 'tables' %}btn-primary{% else %}btn-outline-primary{% endif %}">
+                {{ __('Tableaux', 'dsistats') }}
+            </a>
+            <form id="dsistats-graph-export-form" method="post" action="/glpi/plugins/dsistats/front/export.php" class="d-inline">
+                <input type="hidden" name="view" value="graphs">
+                <input type="hidden" name="from_month" value="{{ filters.from_month }}">
+                <input type="hidden" name="from_year" value="{{ filters.from_year }}">
+                <input type="hidden" name="to_month" value="{{ filters.to_month }}">
+                <input type="hidden" name="to_year" value="{{ filters.to_year }}">
+                {% for group in filters.selected_groups %}
+                    <input type="hidden" name="groups[]" value="{{ group }}">
+                {% endfor %}
+                {% for type in filters.selected_types %}
+                    <input type="hidden" name="types[]" value="{{ type }}">
+                {% endfor %}
+                {% for metric in filters.selected_metrics %}
+                    <input type="hidden" name="metrics[]" value="{{ metric }}">
+                {% endfor %}
+                <input type="hidden" name="_glpi_csrf_token" value="{{ csrf_token }}">
+                <input type="hidden" name="chart_image" id="dsistats-chart-image" value="">
+                <button type="submit" class="btn btn-outline-danger">
+                    <i class="ti ti-file-type-pdf"></i>
+                    {{ __('Exporter en PDF', 'dsistats') }}
+                </button>
+            </form>
+        </div>
+
+        <form method="get" class="mb-4">
+            <div class="row g-3">
+                <div class="col-12 col-lg-4">
+                    <label class="form-label d-block">{{ __('Groupes', 'dsistats') }}</label>
+                    {% for group in group_choices %}
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" name="groups[]" id="group_{{ group.key }}" value="{{ group.key }}"{% if group.key in filters.selected_groups %} checked{% endif %}>
+                            <label class="form-check-label" for="group_{{ group.key }}">{{ group.label }}</label>
+                            {% if group.status != 'found' %}
+                                <span class="small text-danger">({{ group.status_message }})</span>
+                            {% endif %}
+                        </div>
+                    {% endfor %}
+                </div>
+                <div class="col-12 col-lg-4">
+                    <label class="form-label d-block">{{ __('Types', 'dsistats') }}</label>
+                    {% for type in type_choices %}
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" name="types[]" id="type_{{ type.key }}" value="{{ type.key }}"{% if type.key in filters.selected_types %} checked{% endif %}>
+                            <label class="form-check-label" for="type_{{ type.key }}">{{ type.label }}</label>
+                        </div>
+                    {% endfor %}
+                </div>
+                <div class="col-12 col-lg-4">
+                    <label class="form-label d-block">{{ __('Indicateurs', 'dsistats') }}</label>
+                    {% for metric in metric_choices %}
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" name="metrics[]" id="metric_{{ metric.key }}" value="{{ metric.key }}"{% if metric.key in filters.selected_metrics %} checked{% endif %}>
+                            <label class="form-check-label" for="metric_{{ metric.key }}">{{ metric.label }}</label>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <div class="row g-3 align-items-end mt-1">
+                <div class="col-12 col-md-3">
+                    <label for="from_month" class="form-label">{{ __('De', 'dsistats') }}</label>
+                    <select id="from_month" name="from_month" class="form-select">
+                        {% for value, label in month_choices %}
+                            <option value="{{ value }}"{% if value == filters.from_month %} selected{% endif %}>{{ label }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-12 col-md-2">
+                    <label for="from_year" class="form-label">{{ __('Année', 'dsistats') }}</label>
+                    <input id="from_year" name="from_year" type="number" min="2000" max="2100" step="1" class="form-control" value="{{ filters.from_year }}">
+                </div>
+                <div class="col-12 col-md-3">
+                    <label for="to_month" class="form-label">{{ __('À', 'dsistats') }}</label>
+                    <select id="to_month" name="to_month" class="form-select">
+                        {% for value, label in month_choices %}
+                            <option value="{{ value }}"{% if value == filters.to_month %} selected{% endif %}>{{ label }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-12 col-md-2">
+                    <label for="to_year" class="form-label">{{ __('Année', 'dsistats') }}</label>
+                    <input id="to_year" name="to_year" type="number" min="2000" max="2100" step="1" class="form-control" value="{{ filters.to_year }}">
+                </div>
+                <div class="col-12 col-md-2">
+                    <button type="submit" class="btn btn-primary w-100">{{ __('Actualiser', 'dsistats') }}</button>
+                </div>
+            </div>
+        </form>
+
+        <div class="card">
+            <div class="card-body">
+                <div
+                    id="dsistats-chart"
+                    style="width: 100%; height: 500px;"
+                    data-chart='{{ chart|json_encode(constant("JSON_UNESCAPED_UNICODE"))|e("html_attr") }}'
+                ></div>
+                <div id="dsistats-chart-message" class="text-center text-secondary mt-3 d-none"></div>
+            </div>
+        </div>
+
+        <p class="mt-3 mb-1">
+            <strong>{{ __('Période analysée', 'dsistats') }} :</strong>
+            {{ period_label }}
+        </p>
+        <p class="mb-0 text-secondary">{{ visibility_note }}</p>
+    </div>
+</div>

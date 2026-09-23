@@ -1,0 +1,12 @@
+<div class="card">
+    <div class="card-header">
+        <h2 class="card-title mb-0">{{ __('DSI Stats', 'dsistats') }}</h2>
+    </div>
+    <div class="card-body">
+        <p>{{ __('The business configuration for DSI indicators will be added in the next steps.', 'dsistats') }}</p>
+        <p class="mb-0 text-secondary">
+            {{ __('Current initialization flag:', 'dsistats') }}
+            {{ current_config['initialized']|default(0) }}
+        </p>
+    </div>
+</div>

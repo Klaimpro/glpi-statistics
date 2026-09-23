@@ -1,0 +1,25 @@
+# IDE / éditeurs
+.vscode/
+.idea/
+
+# Windows
+Thumbs.db
+Desktop.ini
+
+# macOS
+.DS_Store
+
+# Fichiers temporaires
+*.tmp
+*.temp
+*.log
+*.bak
+*.swp
+
+# Dépendances locales éventuelles
+node_modules/
+vendor/
+
+# Variables / configuration locale
+.env
+.env.*
