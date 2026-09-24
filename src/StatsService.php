@@ -16,20 +16,20 @@ class StatsService
     private const MAX_YEAR = 2100;
 
     private const TARGET_GROUPS = [
-        'infra' => [
-            'label' => 'INFRA',
-            'name' => 'INFRA',
-            'completename' => 'INFRA',
+        'group_a' => [
+            'label' => 'Groupe A',
+            'name' => 'GROUP_A',
+            'completename' => 'GROUP_A',
         ],
-        'etudes' => [
-            'label' => 'ETUDES',
-            'name' => 'ETUDES',
-            'completename' => 'ETUDES',
+        'group_b' => [
+            'label' => 'Groupe B',
+            'name' => 'GROUP_B',
+            'completename' => 'GROUP_B',
         ],
-        'reseau_secu' => [
-            'label' => 'Réseau Sécu',
-            'name' => 'RESEAU & SECURITE',
-            'completename' => 'INFRA > RESEAU & SECURITE',
+        'group_c' => [
+            'label' => 'Groupe C',
+            'name' => 'GROUP_C',
+            'completename' => 'GROUP_PARENT > GROUP_C',
         ],
     ];
 
@@ -39,17 +39,17 @@ class StatsService
     ];
 
     private const TARGETS = [
-        'infra' => [
+        'group_a' => [
             Ticket::INCIDENT_TYPE => [
                 'solve' => 50400,
             ],
         ],
-        'etudes' => [
+        'group_b' => [
             Ticket::DEMAND_TYPE => [
                 'take' => 252000,
             ],
         ],
-        'reseau_secu' => [
+        'group_c' => [
             Ticket::INCIDENT_TYPE => [
                 'solve' => 252000,
             ],

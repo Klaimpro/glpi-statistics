@@ -10,6 +10,7 @@ Desktop.ini
 .DS_Store
 
 # Fichiers temporaires
+*.zip
 *.tmp
 *.temp
 *.log
